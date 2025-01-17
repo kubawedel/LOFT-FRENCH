@@ -12,10 +12,12 @@
     </style>
 </head>
 <body>
-    <script type="module" src="/three.js"></script>
-    <script type="module" src="OrbitControls.js"></script>
-    <script type="module" src="dat.gui.js"></script>
+
     <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
+        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/controls/OrbitControls.js';
+        import { GUI } from 'https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js';
+
        
         // Grundlegende Szeneneinstellungen
         const scene = new THREE.Scene();
