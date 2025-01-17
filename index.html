@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loft French Wall Configurator</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three/examples/jsm/controls/OrbitControls.js';
+        import * as dat from 'dat.gui';
+
+        // Grundlegende Szeneneinstellungen
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf0f0f0);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 5);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // Beleuchtung
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 7.5);
+        scene.add(light);
+
+        const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+        scene.add(ambientLight);
+
+        // Materialien
+        const frameMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8, roughness: 0.2 });
+        const glassMaterial = new THREE.MeshStandardMaterial({
+            color: 0x88ccee,
+            opacity: 0.2,
+            transparent: true,
+            roughness: 0.1,
+            metalness: 0.1
+        });
+
+        // Funktion zur Erstellung der Trennwand
+        function createWall(width, height, depth, columns, rows) {
+            const group = new THREE.Group();
+
+            const outerFrameThickness = { x: 0.02, y: 0.02, z: depth }; // 20x20 mm Außenrahmen
+            const innerFrameThickness = 0.015; // 15x15 mm Innenrahmen
+
+            const totalWidth = width / 100; // Breite in Metern
+            const totalHeight = height / 100; // Höhe in Metern
+
+            const panelWidth = (totalWidth - outerFrameThickness.x * 2) / rows;
+            const panelHeight = (totalHeight - outerFrameThickness.y * 2) / columns;
+
+            // Außenrahmen: Oben, Unten, Links, Rechts
+            const horizontalFrame = new THREE.BoxGeometry(totalWidth, outerFrameThickness.y, outerFrameThickness.z);
+            const bottomMesh = new THREE.Mesh(horizontalFrame, frameMaterial);
+            bottomMesh.position.y = -totalHeight / 2 + outerFrameThickness.y / 2;
+            group.add(bottomMesh);
+
+            const topMesh = bottomMesh.clone();
+            topMesh.position.y = totalHeight / 2 - outerFrameThickness.y / 2;
+            group.add(topMesh);
+
+            const verticalFrame = new THREE.BoxGeometry(outerFrameThickness.x, totalHeight, outerFrameThickness.z);
+            const leftMesh = new THREE.Mesh(verticalFrame, frameMaterial);
+            leftMesh.position.x = -totalWidth / 2 + outerFrameThickness.x / 2;
+            group.add(leftMesh);
+
+            const rightMesh = leftMesh.clone();
+            rightMesh.position.x = totalWidth / 2 - outerFrameThickness.x / 2;
+            group.add(rightMesh);
+
+            // Horizontale und vertikale Innenstreben
+            for (let i = 0; i <= rows; i++) {
+                const verticalSprossen = new THREE.BoxGeometry(innerFrameThickness, totalHeight - outerFrameThickness.y * 2, innerFrameThickness);
+                const vMesh = new THREE.Mesh(verticalSprossen, frameMaterial);
+                vMesh.position.x = -totalWidth / 2 + outerFrameThickness.x + i * panelWidth;
+                group.add(vMesh);
+            }
+
+            for (let j = 0; j <= columns; j++) {
+                const horizontalSprossen = new THREE.BoxGeometry(totalWidth - outerFrameThickness.x * 2, innerFrameThickness, innerFrameThickness);
+                const hMesh = new THREE.Mesh(horizontalSprossen, frameMaterial);
+                hMesh.position.y = -totalHeight / 2 + outerFrameThickness.y + j * panelHeight;
+                group.add(hMesh);
+            }
+
+            // Glasscheibe
+            const glass = new THREE.BoxGeometry(totalWidth - outerFrameThickness.x * 2, totalHeight - outerFrameThickness.y * 2, 0.01);
+            const glassMesh = new THREE.Mesh(glass, glassMaterial);
+            glassMesh.position.z = -outerFrameThickness.z / 2;
+            group.add(glassMesh);
+
+            return group;
+        }
+
+        // Parameter
+        let wall;
+        const params = {
+            width: 90, // Außenmaße in cm
+            height: 200, // Außenmaße in cm
+            depth: 0.04, // Tiefe in Metern (40 mm)
+            columns: 3,
+            rows: 4
+        };
+
+        function updateWall() {
+            if (wall) scene.remove(wall);
+            wall = createWall(params.width, params.height, params.depth, params.columns, params.rows);
+            scene.add(wall);
+        }
+
+        // Benutzeroberfläche für Parametersteuerung
+        const gui = new GUI();
+        gui.add(params, 'width', 50, 300, 1).name('Width (cm)').onChange(updateWall);
+        gui.add(params, 'height', 50, 300, 1).name('Height (cm)').onChange(updateWall);
+        gui.add(params, 'columns', 1, 5, 1).name('Columns').onChange(updateWall);
+        gui.add(params, 'rows', 1, 5, 1).name('Rows').onChange(updateWall);
+
+        // Initialisierung
+        updateWall();
+
+        // Render-Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
