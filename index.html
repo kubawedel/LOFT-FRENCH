@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loft French Wall Configurator</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
+    <title>LOFT French Konfigurator</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.155.0/build/three.module.js",
+                "OrbitControls": "https://unpkg.com/three@0.155.0/examples/jsm/controls/OrbitControls.js",
+                "dat.gui": "https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js"
+            }
         }
-    </style>
+    </script>
 </head>
 <body>
-
     <script type="module">
-        import * as THREE from 'https://unpkg.com/three@0.155.0/build/three.module.js';
-        import { OrbitControls } from 'https://unpkg.com/three@0.155.0/examples/jsm/controls/OrbitControls.js';
-        import * as dat from 'https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js';
+        // Import modules using the import map
+        import * as THREE from 'three';
+        import { OrbitControls } from 'OrbitControls';
+        import * as dat from 'dat.gui';
 
 
        
