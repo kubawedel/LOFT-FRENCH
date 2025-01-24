@@ -28,7 +28,7 @@
         scene.background = new THREE.Color(0xf0f0f0);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 5);
+        camera.position.set(0, 2, 4);
 
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -129,10 +129,10 @@
 
         // Benutzeroberfläche für Parametersteuerung
         const gui = new dat.GUI()
-        gui.add(params, 'width', 50, 300, 1).name('Width (cm)').onChange(updateWall);
-        gui.add(params, 'height', 50, 300, 1).name('Height (cm)').onChange(updateWall);
-        gui.add(params, 'columns', 1, 5, 1).name('Columns').onChange(updateWall);
-        gui.add(params, 'rows', 1, 5, 1).name('Rows').onChange(updateWall);
+        gui.add(params, 'width', 50, 300, 1).name('Breite (cm)').onChange(updateWall);
+        gui.add(params, 'height', 50, 300, 1).name('Höhe (cm)').onChange(updateWall);
+        gui.add(params, 'columns', 1, 5, 1).name('horizontale Felder').onChange(updateWall);
+        gui.add(params, 'rows', 1, 5, 1).name('vertikale Felder').onChange(updateWall);
 
         // Initialisierung
         updateWall();
