@@ -128,7 +128,7 @@
         }
 
         // Benutzeroberfläche für Parametersteuerung
-        const gui = new GUI();
+        const gui = new dat.GUI()
         gui.add(params, 'width', 50, 300, 1).name('Width (cm)').onChange(updateWall);
         gui.add(params, 'height', 50, 300, 1).name('Height (cm)').onChange(updateWall);
         gui.add(params, 'columns', 1, 5, 1).name('Columns').onChange(updateWall);
